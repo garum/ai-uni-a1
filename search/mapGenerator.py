@@ -11,7 +11,7 @@ class mazeGenerator:
         self.maze=[[]]
         self.xmax=width
         self.ymax=height
-        self.visited= [ [ False for _ in range(width)] for _ in range(height) ]
+        self.visited= [ [ False for _ in range(width+1)] for _ in range(height+1) ]
         self.listToRemove=[]
 
     def recursiveMethod( self,pos):
@@ -24,7 +24,6 @@ class mazeGenerator:
                 newPos=pos + direction
                 newPos=tuple( map(lambda x,y: x+y, pos,direction))
                 newx,newy=newPos
-                print self.isInsideTheMaze(newx,newy) 
                 if self.isInsideTheMaze(newx,newy) == True:
                    
                     if self.visited[newx][newy] == False:
@@ -37,25 +36,20 @@ class mazeGenerator:
             
 
     def generate(self):
-        """Create maze
 
-        Paramaters
-        ----------
-        name : str
-            Name for the maze
-        width : int
-
-        Returns
-        -------
-
-        """
         rooms=[]
-        self.maze = [ [ '%' for _ in range(3*self.xmax+1)] for _ in range(3*self.ymax+1) ]
-        for i in range(1,3*self.xmax,2):
-            for j in range(1,3*self.ymax,2):
+        self.maze = [ [ '%' for _ in range(2*self.xmax+1)] for _ in range(2*self.ymax+1) ]
+        for i in range(1,2*self.xmax,2):
+            for j in range(1,2*self.ymax,2):
                 rooms.append((i,j))
                 self.maze[i][j]='_'
-        print rooms
+        
+        self.recursiveMethod((1,1))
+        self.visited= [ [ False for _ in range(self.xmax+1)] for _ in range(self.ymax+1) ]
+        self.recursiveMethod((5,5))
+        for room1,room2 in self.listToRemove:
+            self.removeWall(room1,room2)
+
         return self.maze
 
     def __writeMaze(self):
@@ -74,19 +68,24 @@ class mazeGenerator:
         print "\n",
 
     def isInsideTheMaze(self,x,y):
-        return x > 0 and y > 0 and x < self.xmax and y<self.ymax 
+        return x > 0 and y > 0 and x <= self.xmax and y <= self.ymax 
 
-    def getRoom(self,x,y):
-        pass
-        
+    def _getRoomPosition(self,room):
+        x,y=room
+        return (2*(x-1)+1,2*(y-1)+1)
 
+    def _getWallBetween(self,pos1,pos2):
+        distance=tuple( map(lambda x,y: x-y, pos1,pos2))
+        distance=tuple( map(lambda x: x/2, distance))
+        wall=tuple( map(lambda x,y: x-y, pos1,distance))
 
+        return wall
 
-
-
-
-
-
+    def removeWall(self,room1,room2):
+        position1 = self._getRoomPosition(room1)
+        position2 = self._getRoomPosition(room2)
+        x,y=self._getWallBetween(position1,position2)
+        self.maze[x][y]="_"
 
 def runGenerator():
     pass
@@ -94,8 +93,8 @@ def runGenerator():
 
 
 if __name__ == "__main__":
-    gen=mazeGenerator(11,11)
+    gen=mazeGenerator(10,10)
     gen.generate()
     gen._printMaze()
-
+   
 
