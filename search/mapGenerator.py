@@ -5,6 +5,14 @@ import util
 
 directions=[(0,1),(0,-1),(-1,0),(1,0)]
 
+class mazeSymbols:
+    EMPTY = '_'
+    WALL = "%"
+    PACMAN = "P"
+    GHOST = "G"
+    FOOD = "."
+    
+
 class mazeGenerator:
 
     def __init__ (self,width=10,height=10):
@@ -38,11 +46,11 @@ class mazeGenerator:
     def generate(self):
 
         rooms=[]
-        self.maze = [ [ '%' for _ in range(2*self.xmax+1)] for _ in range(2*self.ymax+1) ]
+        self.maze = [ [ mazeSymbols.WALL for _ in range(2*self.xmax+1)] for _ in range(2*self.ymax+1) ]
         for i in range(1,2*self.xmax,2):
             for j in range(1,2*self.ymax,2):
                 rooms.append((i,j))
-                self.maze[i][j]='_'
+                self.maze[i][j]=mazeSymbols.EMPTY
         
         self.recursiveMethod((1,1))
         self.visited= [ [ False for _ in range(self.xmax+1)] for _ in range(self.ymax+1) ]
@@ -85,7 +93,7 @@ class mazeGenerator:
         position1 = self._getRoomPosition(room1)
         position2 = self._getRoomPosition(room2)
         x,y=self._getWallBetween(position1,position2)
-        self.maze[x][y]="_"
+        self.maze[x][y]=mazeSymbols.EMPTY
 
 def runGenerator():
     pass
@@ -95,6 +103,8 @@ def runGenerator():
 if __name__ == "__main__":
     gen=mazeGenerator(10,10)
     gen.generate()
+    gen.maze[1][1]=mazeSymbols.FOOD
+    gen.maze[1][3]=mazeSymbols.PACMAN
     gen._printMaze()
-   
+
 
