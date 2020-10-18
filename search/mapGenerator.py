@@ -57,11 +57,29 @@ class mazeGenerator:
         self.recursiveMethod((5,5))
         for room1,room2 in self.listToRemove:
             self.removeWall(room1,room2)
+        
 
+        # temporary solution
+        #gen.maze[1][1]=mazeSymbols.FOOD
+        gen.maze[1][3]=mazeSymbols.PACMAN
         return self.maze
 
-    def __writeMaze(self):
-        pass
+    def writeMaze(self,name):
+        file = open("layouts/"+ name, "w")
+
+        str_maze=""
+        for rows in self.maze:
+            str_row=""
+            for elem in rows:
+                str_row+=elem
+            str_row+='\n'
+            str_maze+=str_row
+
+        file.write(str_maze)
+
+
+
+        
 
     def __randomName(self,codeLenght):
         code = "".join(random.choice(string.ascii_lowercase) for i in range(codeLenght))
@@ -103,8 +121,8 @@ def runGenerator():
 if __name__ == "__main__":
     gen=mazeGenerator(10,10)
     gen.generate()
-    gen.maze[1][1]=mazeSymbols.FOOD
-    gen.maze[1][3]=mazeSymbols.PACMAN
+
     gen._printMaze()
+    gen.writeMaze("randomTest.lay")
 
 
