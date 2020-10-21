@@ -82,7 +82,8 @@ class Configuration:
 
     def getPosition(self):
         return (self.pos)
-
+    def setPosition(self,coord):
+        self.pos = coord
     def getDirection(self):
         return self.direction
 
@@ -379,11 +380,13 @@ class GameStateData:
         if prevState != None:
             self.food = prevState.food.shallowCopy()
             self.capsules = prevState.capsules[:]
+            self.teleport = prevState.teleport[:]
             self.agentStates = self.copyAgentStates( prevState.agentStates )
             self.layout = prevState.layout
             self._eaten = prevState._eaten
             self.score = prevState.score
 
+        self._teleportEaten = None
         self._foodEaten = None
         self._foodAdded = None
         self._capsuleEaten = None
@@ -400,6 +403,7 @@ class GameStateData:
         state._foodEaten = self._foodEaten
         state._foodAdded = self._foodAdded
         state._capsuleEaten = self._capsuleEaten
+        state._teleportEaten = self._teleportEaten
         return state
 
     def copyAgentStates( self, agentStates ):
@@ -491,6 +495,7 @@ class GameStateData:
         self.food = layout.food.copy()
         #self.capsules = []
         self.capsules = layout.capsules[:]
+        self.teleport = layout.teleports[:]
         self.layout = layout
         self.score = 0
         self.scoreChange = 0
