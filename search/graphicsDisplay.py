@@ -67,9 +67,13 @@ PACMAN_SCALE = 0.5
 # Food
 FOOD_COLOR = formatColor(1,1,1)
 FOOD_SIZE = 0.1
-
+# Random teleporter
 TELEPORT_COLOR = formatColor(1,1,0)
 TELEPORT_SIZE = 0.2
+
+# Pair teleporter
+PAIR_COLOR = formatColor(1,0,1)
+PAIR_SIZE = 0.2
 
 # Laser
 LASER_COLOR = formatColor(1,0,0)
@@ -210,6 +214,7 @@ class PacmanGraphics:
         self.food = self.drawFood(layout.food)
         self.capsules = self.drawCapsules(layout.capsules)
         self.teleports = self.drawTeleport(layout.teleports)
+        self.pairs = self.drawPair(layout.pairs)
         refresh()
 
     def drawAgentObjects(self, state):
@@ -567,6 +572,18 @@ class PacmanGraphics:
                               TELEPORT_SIZE * self.gridSize,
                               outlineColor = TELEPORT_COLOR,
                               fillColor = TELEPORT_COLOR,
+                              width = 1)
+            capsuleImages[capsule] = dot
+        return capsuleImages
+    
+    def drawPair(self, teleports ):
+        capsuleImages = {}
+        for capsule in teleports:
+            ( screen_x, screen_y ) = self.to_screen(capsule)
+            dot = circle( (screen_x, screen_y),
+                              PAIR_SIZE * self.gridSize,
+                              outlineColor = PAIR_COLOR,
+                              fillColor = PAIR_COLOR,
                               width = 1)
             capsuleImages[capsule] = dot
         return capsuleImages

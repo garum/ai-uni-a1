@@ -385,7 +385,8 @@ class GameStateData:
             self.layout = prevState.layout
             self._eaten = prevState._eaten
             self.score = prevState.score
-
+            self.pair = prevState.pair
+        
         self._teleportEaten = None
         self._foodEaten = None
         self._foodAdded = None
@@ -497,6 +498,7 @@ class GameStateData:
         self.capsules = layout.capsules[:]
         self.teleport = layout.teleports[:]
         self.layout = layout
+        self.pair = layout.pairs[:]
         self.score = 0
         self.scoreChange = 0
 

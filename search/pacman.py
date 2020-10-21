@@ -175,6 +175,8 @@ class GameState:
 
     def getTeleport(self):
         return self.data.teleport
+    def getPair(self):
+        return self.data.pair
     def getNumFood( self ):
         return self.data.food.count()
 
@@ -390,7 +392,13 @@ class PacmanRules:
                 if(not layout.walls[x][y] and (x,y) not in layout.agentPositions):
                     break
             a.configuration.setPosition((x,y))
-
+        if( position in state.getPair() ):
+            for pos in state.getPair():
+                if position != pos :
+                    x1,y1 = pos
+                    a=state.data.agentStates[0]
+                    a.configuration.setPosition((x1,y1))
+                    break
     consume = staticmethod( consume )
 
 class GhostRules:
