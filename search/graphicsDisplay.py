@@ -67,6 +67,13 @@ PACMAN_SCALE = 0.5
 # Food
 FOOD_COLOR = formatColor(1,1,1)
 FOOD_SIZE = 0.1
+# Random teleporter
+TELEPORT_COLOR = formatColor(1,1,0)
+TELEPORT_SIZE = 0.2
+
+# Pair teleporter
+PAIR_COLOR = formatColor(1,0,1)
+PAIR_SIZE = 0.2
 
 # Laser
 LASER_COLOR = formatColor(1,0,0)
@@ -206,6 +213,8 @@ class PacmanGraphics:
         self.drawWalls(layout.walls)
         self.food = self.drawFood(layout.food)
         self.capsules = self.drawCapsules(layout.capsules)
+        self.teleports = self.drawTeleport(layout.teleports)
+        self.pairs = self.drawPair(layout.pairs)
         refresh()
 
     def drawAgentObjects(self, state):
@@ -249,6 +258,8 @@ class PacmanGraphics:
             self.removeFood(newState._foodEaten, self.food)
         if newState._capsuleEaten != None:
             self.removeCapsule(newState._capsuleEaten, self.capsules)
+        if newState._teleportEaten != None:
+            self.removeTeleport(newState._teleportEaten, self.teleports)
         self.infoPane.updateScore(newState.score)
         if 'ghostDistances' in dir(newState):
             self.infoPane.updateGhostDistances(newState.ghostDistances)
@@ -553,6 +564,30 @@ class PacmanGraphics:
             capsuleImages[capsule] = dot
         return capsuleImages
 
+    def drawTeleport(self, teleports ):
+        capsuleImages = {}
+        for capsule in teleports:
+            ( screen_x, screen_y ) = self.to_screen(capsule)
+            dot = circle( (screen_x, screen_y),
+                              TELEPORT_SIZE * self.gridSize,
+                              outlineColor = TELEPORT_COLOR,
+                              fillColor = TELEPORT_COLOR,
+                              width = 1)
+            capsuleImages[capsule] = dot
+        return capsuleImages
+    
+    def drawPair(self, teleports ):
+        capsuleImages = {}
+        for capsule in teleports:
+            ( screen_x, screen_y ) = self.to_screen(capsule)
+            dot = circle( (screen_x, screen_y),
+                              PAIR_SIZE * self.gridSize,
+                              outlineColor = PAIR_COLOR,
+                              fillColor = PAIR_COLOR,
+                              width = 1)
+            capsuleImages[capsule] = dot
+        return capsuleImages
+    
     def removeFood(self, cell, foodImages ):
         x, y = cell
         remove_from_screen(foodImages[x][y])
@@ -560,7 +595,9 @@ class PacmanGraphics:
     def removeCapsule(self, cell, capsuleImages ):
         x, y = cell
         remove_from_screen(capsuleImages[(x, y)])
-
+    def removeTeleport(self,cell, teleportImages ):
+        x, y = cell
+        remove_from_screen(teleportImages[(x,y)])
     def drawExpandedCells(self, cells):
         """
         Draws an overlay of expanded grid positions for search agents
