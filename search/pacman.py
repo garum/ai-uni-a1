@@ -45,9 +45,10 @@ from game import Directions
 from game import Actions
 from util import nearestPoint
 from util import manhattanDistance
-import util, layout
+import util
 import sys, types, time, random, os
-
+from mapGenerator import mazeGenerator
+import layout as ilayout 
 ###################################################
 # YOUR INTERFACE TO THE PACMAN WORLD: A GameState #
 ###################################################
@@ -546,6 +547,7 @@ def readCommand( argv ):
                       help='Turns on exception handling and timeouts during games', default=False)
     parser.add_option('--timeout', dest='timeout', type='int',
                       help=default('Maximum length of time an agent can spend computing in a single game'), default=30)
+    parser.add_option('-e','--endlessRun',default=False, help=default('no help'),dest='endlessRun')
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0:
@@ -556,7 +558,8 @@ def readCommand( argv ):
     if options.fixRandomSeed: random.seed('cs188')
 
     # Choose a layout
-    args['layout'] = layout.getLayout( options.layout )
+
+    args['layout'] = ilayout.getLayout( options.layout )
     if args['layout'] == None: raise Exception("The layout " + options.layout + " cannot be found")
 
     # Choose a Pacman agent
@@ -594,6 +597,7 @@ def readCommand( argv ):
     args['catchExceptions'] = options.catchExceptions
     args['timeout'] = options.timeout
 
+    args['endlessRun'] = options.endlessRun
     # Special case: recorded games don't use the runGames method or args structure
     if options.gameToReplay != None:
         print 'Replaying recorded game %s.' % options.gameToReplay
@@ -648,13 +652,15 @@ def replayGame( layout, actions, display ):
 
     display.finish()
 
-def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30 , infinityRun=False):
+def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30 , endlessRun=False):
     import __main__
     __main__.__dict__['_display'] = display
 
     rules = ClassicGameRules(timeout)
     games = []
-    if infinityRun==False:
+
+    if endlessRun == False:
+
         for i in range( numGames ):
             beQuiet = i < numTraining
             if beQuiet:
@@ -685,7 +691,45 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
             print 'Scores:       ', ', '.join([str(score) for score in scores])
             print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
             print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
-     
+    else: 
+        won = True
+        total_score=0
+        while won:
+          
+            beQuiet = 1 < numTraining
+            if beQuiet:
+                    # Suppress output and graphics
+                import textDisplay
+                gameDisplay = textDisplay.NullGraphics()
+                rules.quiet = True
+            else:
+                gameDisplay = display
+                rules.quiet = False
+            
+            
+            
+            gen=mazeGenerator()
+            gen.generate()
+            maze=gen.writeMaze("randomTest.lay",True)
+           
+            layout=ilayout.getLayout("randomTest.lay")
+           
+            game = rules.newGame( layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions)
+            game.state.data.score=total_score
+      
+            game.run()
+            total_score+= 500
+            if not beQuiet: games.append(game)
+
+            if record:
+                import time, cPickle
+                fname = ('recorded-game-%d' % (i + 1)) +  '-'.join([str(t) for t in time.localtime()[1:6]])
+                f = file(fname, 'w')
+                components = {'layout': layout, 'actions': game.moveHistory}
+                cPickle.dump(components, f)
+                f.close()
+            won=game.state.isWin()
+
     return games
 
 if __name__ == '__main__':
@@ -701,7 +745,7 @@ if __name__ == '__main__':
     """
 
     args = readCommand( sys.argv[1:] ) # Get game components based on input 
-    print args
+ 
     runGames( **args )
 
     # import cProfile

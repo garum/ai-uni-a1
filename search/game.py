@@ -25,6 +25,7 @@ import time, os
 import traceback
 import sys
 
+
 #######################
 # Parts worth reading #
 #######################
@@ -517,6 +518,11 @@ try:
 except:
     _BOINC_ENABLED = False
 
+
+def getLayoutGame(name):
+    from layout import getLayout
+    return getLayout(name)
+
 class Game:
     """
     The Game manages the control flow, soliciting actions from agents.
@@ -582,6 +588,7 @@ class Game:
         # inform learning agents of the game start
         for i in range(len(self.agents)):
             agent = self.agents[i]
+        
             if not agent:
                 self.mute(i)
                 # this is a null agent, meaning it failed to load
@@ -645,6 +652,7 @@ class Game:
                 self.unmute()
             else:
                 observation = self.state.deepCopy()
+            
 
             # Solicit an action
             action = None
@@ -719,7 +727,9 @@ class Game:
             agentIndex = ( agentIndex + 1 ) % numAgents
 
             if _BOINC_ENABLED:
-                boinc.set_fraction_done(self.getProgress())
+                boinc.wion_done(self.getProgress())
+
+         
 
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):
@@ -733,4 +743,7 @@ class Game:
                     self._agentCrash(agentIndex)
                     self.unmute()
                     return
+      
+
         self.display.finish()
+   
