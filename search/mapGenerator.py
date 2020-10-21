@@ -60,11 +60,20 @@ class mazeGenerator:
         
 
         # temporary solution
-        #gen.maze[1][1]=mazeSymbols.FOOD
-        gen.maze[1][3]=mazeSymbols.PACMAN
+        
+        foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
+        self.maze[foodx][foody]=mazeSymbols.FOOD
+        self.maze[1][1]=mazeSymbols.PACMAN
+
+        #foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
+        #self.maze[foodx][foody]=mazeSymbols.GHOST
+        #foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
+        #self.maze[foodx][foody]=mazeSymbols.GHOST
+        #foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
+        #self.maze[foodx][foody]=mazeSymbols.GHOST
         return self.maze
 
-    def writeMaze(self,name):
+    def writeMaze(self,name="randomTest.lay",file=False):
         file = open("layouts/"+ name, "w")
 
         str_maze=""
@@ -74,8 +83,11 @@ class mazeGenerator:
                 str_row+=elem
             str_row+='\n'
             str_maze+=str_row
-
-        file.write(str_maze)
+        if file:
+            file.write(str_maze)
+        return str_maze
+        
+  
 
 
 
@@ -123,6 +135,6 @@ if __name__ == "__main__":
     gen.generate()
 
     gen._printMaze()
-    gen.writeMaze("randomTest.lay")
+    gen.writeMaze("randomTest.lay",True)
 
 
