@@ -174,6 +174,10 @@ class GameState:
         """
         return self.data.capsules
 
+    def getTeleport(self):
+        return self.data.teleport
+    def getPair(self):
+        return self.data.pair
     def getNumFood( self ):
         return self.data.food.count()
 
@@ -377,6 +381,25 @@ class PacmanRules:
             # Reset all ghosts' scared timers
             for index in range( 1, len( state.data.agentStates ) ):
                 state.data.agentStates[index].scaredTimer = SCARED_TIME
+        # Eat teleport blob
+        if( position in state.getTeleport() ):
+            state.data.teleport.remove( position )
+            state.data._teleportEaten = position
+            a=state.data.agentStates[0]
+            layout = state.data.layout 
+            while True:
+                x = random.randint(1,layout.width-1)
+                y = random.randint(1,layout.height-1)
+                if(not layout.walls[x][y] and (x,y) not in layout.agentPositions):
+                    break
+            a.configuration.setPosition((x,y))
+        if( position in state.getPair() ):
+            for pos in state.getPair():
+                if position != pos :
+                    x1,y1 = pos
+                    a=state.data.agentStates[0]
+                    a.configuration.setPosition((x1,y1))
+                    break
     consume = staticmethod( consume )
 
 class GhostRules:
@@ -635,7 +658,9 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
 
     rules = ClassicGameRules(timeout)
     games = []
+
     if endlessRun == False:
+
         for i in range( numGames ):
             beQuiet = i < numTraining
             if beQuiet:
