@@ -29,7 +29,9 @@ class Layout:
         self.height= len(layoutText)
         self.walls = Grid(self.width, self.height, False)
         self.food = Grid(self.width, self.height, False)
+        self.pairs = []
         self.capsules = []
+        self.teleports = []
         self.agentPositions = []
         self.numGhosts = 0
         self.processLayoutText(layoutText)
@@ -125,6 +127,10 @@ class Layout:
         elif layoutChar in ['G']:
             self.agentPositions.append( (1, (x, y) ) )
             self.numGhosts += 1
+        elif layoutChar == 'A':
+            self.pairs.append((x,y))
+        elif layoutChar == 'T':
+            self.teleports.append((x,y))
         elif layoutChar in  ['1', '2', '3', '4']:
             self.agentPositions.append( (int(layoutChar), (x,y)))
             self.numGhosts += 1
