@@ -40,7 +40,7 @@ class mazeGenerator:
                         self.listToRemove.append((newPos,pos))
                         self.recursiveMethod(newPos) 
                
-    def generate(self):
+    def generate(self,level=1):
 
         rooms=[]
         self.maze = [ [ mazeSymbols.WALL for _ in range(2*self.jmax+1)] for _ in range(2*self.imax+1) ]
@@ -50,7 +50,7 @@ class mazeGenerator:
                 rooms.append((i,j))
                 self.maze[i][j]=mazeSymbols.EMPTY
 
-        self._printVisited()
+        
         self.recursiveMethod((1,1))
         self.visited= [ [ False for _ in range(self.jmax+1)] for _ in range(self.imax+1) ]
         self.recursiveMethod((5,5))
@@ -58,26 +58,38 @@ class mazeGenerator:
             self._removeWall(room1,room2)
         
         self.deleteSingleCorners()
-        self.distributeItems()
+        self.distributeItems(1 + (level/2) )
         
         return self.maze
-    
-    def distributeItems(self):
-        foodx,foody=self._getRoomPosition((random.randint(1,self.imax),random.randint(1,self.jmax)))
-        self.maze[foodx][foody]=mazeSymbols.GHOST
 
-        foodx,foody=self._getRoomPosition((random.randint(1,self.imax),random.randint(1,self.jmax)))
-        self.maze[foodx][foody]=mazeSymbols.FOOD
-       # self.maze[1][1]=mazeSymbols.PACMAN
+    def __getRandomPostion(self,occupied):
+        pos = self._getRoomPosition((random.randint(1,self.imax),random.randint(1,self.jmax)))
+        while pos in occupied:
+            pos = self._getRoomPosition((random.randint(1,self.imax),random.randint(1,self.jmax)))
+        return pos
 
-        foodx,foody=self._getRoomPosition((random.randint(1,self.imax),random.randint(1,self.jmax)))
-        self.maze[foodx][foody]=mazeSymbols.PAIR_TELEPORT
-        foodx,foody=self._getRoomPosition((random.randint(1,self.imax),random.randint(1,self.jmax)))
-        self.maze[foodx][foody]=mazeSymbols.PAIR_TELEPORT
+    def distributeItems(self, ghost = 1):
+
         self.maze[1][1]=mazeSymbols.PACMAN
+        occupied=[(1,1)]
+        x,y = self.__getRandomPostion(occupied)
+        self.maze[x][y]=mazeSymbols.FOOD
+        occupied.append((x,y))
 
+        x,y = self.__getRandomPostion(occupied)
+        self.maze[x][y]=mazeSymbols.PAIR_TELEPORT
+        occupied.append((x,y))
 
+        x,y = self.__getRandomPostion(occupied)
+        self.maze[x][y]=mazeSymbols.PAIR_TELEPORT
+        occupied.append((x,y)) 
 
+        for _ in range(ghost):
+            x,y = self.__getRandomPostion(occupied)
+            self.maze[x][y]=mazeSymbols.GHOST
+            occupied.append((x,y))
+
+        
     def writeMaze(self,name="randomTest.lay",file=False):
         file = open("layouts/"+ name, "w")
 
@@ -158,11 +170,11 @@ class mazeGenerator:
 def runGenerator(mapName,level=1):
     x= random.randint(3,8)
     y= random.randint(3,5)
-    print x,y
+  
     gen=mazeGenerator(2*x,2*y)
-    gen.generate()
+    gen.generate(level)
 
-    gen._printMaze()
+
     gen.writeMaze("randomTest.lay",True)
 
 
