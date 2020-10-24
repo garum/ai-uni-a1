@@ -47,7 +47,7 @@ from util import nearestPoint
 from util import manhattanDistance
 import util
 import sys, types, time, random, os
-from mapGenerator import mazeGenerator
+from mapGenerator import mazeGenerator,runGenerator
 import layout as ilayout 
 ###################################################
 # YOUR INTERFACE TO THE PACMAN WORLD: A GameState #
@@ -398,7 +398,7 @@ class PacmanRules:
             a.configuration.setPosition((x,y))
         #Eat teleport Pair
         teleportsInfo=state.getWarp()
-        print teleportsInfo
+        
         activation = teleportsInfo[0]
         if( position in teleportsInfo  and activation == True):
             
@@ -712,6 +712,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
     else: 
         won = True
         total_score=0
+        level = 1
         while won:
           
             beQuiet = 1 < numTraining
@@ -726,10 +727,8 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
             
             
             
-            gen=mazeGenerator()
-            gen.generate()
-            maze=gen.writeMaze("randomTest.lay",True)
            
+            runGenerator("randomTest.lay",level)
             layout=ilayout.getLayout("randomTest.lay")
            
             game = rules.newGame( layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions)
@@ -737,6 +736,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
       
             game.run()
             total_score+= 500
+            level +=1 
             if not beQuiet: games.append(game)
 
             if record:
