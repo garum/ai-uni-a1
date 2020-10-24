@@ -214,7 +214,7 @@ class PacmanGraphics:
         self.food = self.drawFood(layout.food)
         self.capsules = self.drawCapsules(layout.capsules)
         self.teleports = self.drawTeleport(layout.teleports)
-        self.pairs = self.drawPair(layout.pairs)
+        self.pairs = self.drawPair(layout.pairs[1:])
         refresh()
 
     def drawAgentObjects(self, state):

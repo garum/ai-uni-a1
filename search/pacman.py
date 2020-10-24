@@ -176,8 +176,11 @@ class GameState:
 
     def getTeleport(self):
         return self.data.teleport
-    def getPair(self):
-        return self.data.pair
+    def getWarp(self):
+        return self.data.warp
+    def setWarpActivation(self,val):
+        self.data.warp[0]=val
+        
     def getNumFood( self ):
         return self.data.food.count()
 
@@ -393,13 +396,28 @@ class PacmanRules:
                 if(not layout.walls[x][y] and (x,y) not in layout.agentPositions):
                     break
             a.configuration.setPosition((x,y))
-        if( position in state.getPair() ):
-            for pos in state.getPair():
-                if position != pos :
-                    x1,y1 = pos
-                    a=state.data.agentStates[0]
-                    a.configuration.setPosition((x1,y1))
-                    break
+        #Eat teleport Pair
+        teleportsInfo=state.getWarp()
+        print teleportsInfo
+        activation = teleportsInfo[0]
+        if( position in teleportsInfo  and activation == True):
+            
+            if (position == teleportsInfo[1]):
+                x1,y1 = teleportsInfo[2]
+                state.setWarpActivation(False)
+                a=state.data.agentStates[0]
+                a.configuration.setPosition((x1,y1))
+            elif(position == teleportsInfo[2] ):
+                x1,y1 = teleportsInfo[1]
+                state.setWarpActivation(False)
+                a=state.data.agentStates[0]
+                a.configuration.setPosition((x1,y1))
+        if (position not in teleportsInfo):
+            state.setWarpActivation(True)
+      
+            
+
+            
     consume = staticmethod( consume )
 
 class GhostRules:

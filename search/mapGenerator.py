@@ -11,6 +11,7 @@ class mazeSymbols:
     PACMAN = "P"
     GHOST = "G"
     FOOD = "."
+    PAIR_TELEPORT = "A"
     
 
 class mazeGenerator:
@@ -62,15 +63,17 @@ class mazeGenerator:
         # temporary solution
         
         foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
-        self.maze[foodx][foody]=mazeSymbols.FOOD
-        self.maze[1][1]=mazeSymbols.PACMAN
+        self.maze[foodx][foody]=mazeSymbols.GHOST
 
-        #foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
-        #self.maze[foodx][foody]=mazeSymbols.GHOST
-        #foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
-        #self.maze[foodx][foody]=mazeSymbols.GHOST
-        #foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
-        #self.maze[foodx][foody]=mazeSymbols.GHOST
+        foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
+        self.maze[foodx][foody]=mazeSymbols.FOOD
+       # self.maze[1][1]=mazeSymbols.PACMAN
+
+        foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
+        self.maze[foodx][foody]=mazeSymbols.PAIR_TELEPORT
+        foodx,foody=self._getRoomPosition((random.randint(1,self.xmax),random.randint(1,self.ymax)))
+        self.maze[foodx][foody]=mazeSymbols.PAIR_TELEPORT
+        self.maze[1][1]=mazeSymbols.PACMAN
         return self.maze
 
     def writeMaze(self,name="randomTest.lay",file=False):
